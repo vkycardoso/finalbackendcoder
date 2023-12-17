@@ -1,0 +1,38 @@
+<div class="container-fluid bg-light py-2 mb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <a href="/" class="text-decoration-none text-dark"> 
+                  <h3>Rworld Store!</h3>  
+                </a>
+            </div>
+            <div class="col-md-1 d-flex align-items-center justify-content-center">
+                {{#if user}}
+                    {{#if (eq user.role "premium")}}
+                        <a href="/store" class="text-dark"><i class="fas fa-store fa-lg"></i></a>
+                    {{else if (eq user.role "admin")}}
+                        <a href="/users/manage" class="text-dark"><i class="fas fa-users fa-lg"></i></a>
+                    {{/if}}
+                {{/if}}
+            </div>
+            <div class="col-md-1 d-flex align-items-center justify-content-center">
+                {{#if user}}
+                    <a href="/cart" class="text-dark"><i class="fas fa-shopping-cart fa-lg"></i></a>
+                {{else}}
+                    <a href="/auth/login" class="text-dark"><i class="fas fa-shopping-cart fa-lg"></i></a>
+                {{/if}}
+            </div>
+            <div class="col-md-3 text-left d-flex align-items-center justify-content-center">
+                {{#if user}}
+                    <a href="/profile" class="text-dark font-weight-bold text-decoration-none me-2">{{user.firstName}}</a>
+                    <a href="/profile" class="profile-image-link">
+                        <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image">
+                    </a>
+                {{else}}
+                    <a href="/auth/login" class="btn btn-primary mx-1">Log In</a>
+                    <a href="/auth/register" class="btn btn-success mx-1">Sign Up</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

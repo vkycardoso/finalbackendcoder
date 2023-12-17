@@ -1,0 +1,69 @@
+{{#if error}}
+<div class="alert alert-danger mx-5">{{error}}</div>
+{{/if}}
+
+{{#if message}}
+<div class="alert alert-info mx-5">{{message}}</div>
+{{/if}}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <h2 class="text-center mb-2">Welcome, {{user.firstName}} {{user.lastName}}!</h2>
+
+                    <div class="text-center mb-2">
+                        <div class="profile-image-container">
+                            <div class="profile-image-canva">
+                                <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image-lg">
+                            </div>
+                        <form action="/api/users/profile-img/upload" method="post" enctype="multipart/form-data" id="profile-image-form">
+                            <input type="file" name="image" id="profile-image-input" style="display: none;">
+                            <a href="javascript:void(0)" class="edit-icon" onclick="document.getElementById('profile-image-input').click()">
+                            <i class="fas fa-pen"></i>
+                            </a>
+                        </form>
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{user.email}}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Age:</strong> {{user.age}}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Role:</strong> {{user.role}}
+                        </li>
+                    </ul>
+
+                    <div class="row mt-2 mb-3">
+                        <div class="col text-center">
+                            <a href="/auth/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
+                            {{#if (eq user.role "user")}}
+                                <a href="/upgrade/request" id="upgrade-button" class="btn btn-success btn-block">Upgrade to Premium</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/chat" class="btn btn-primary rounded-circle p-0 shadow d-flex justify-content-center align-items-center" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;">
+        <i class="fas fa-comments text-white" style="font-size: 24px;"></i>
+    </a>
+</div>
+
+<style>
+
+</style>
+
+<script>
+  document.getElementById('profile-image-input').addEventListener('change', function() {
+    document.getElementById('profile-image-form').submit();
+  });
+</script>

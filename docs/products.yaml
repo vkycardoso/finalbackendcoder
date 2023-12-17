@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: Rworld API documentation
+  version: "1.0.0"
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Get all products with optional pagination, sorting, and filtering
+      parameters:
+        - name: limit
+          in: query
+          description: Number of products to return per page
+          schema:
+            type: integer
+            default: 3
+        - name: page
+          in: query
+          description: Page number to return
+          schema:
+            type: integer
+            default: 1
+        - name: sort
+          in: query
+          description: Sort order (asc or desc) by price
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+        - name: query
+          in: query
+          description: Search query to filter products by title or category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of products with pagination details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  totalPages:
+                    type: integer
+                  page:
+                    type: integer
+                  hasPrevPage:
+                    type: boolean
+                  hasNextPage:
+                    type: boolean
+                  prevPage:
+                    type: integer
+                  nextPage:
+                    type: integer
+                  prevLink:
+                    type: string
+                  nextLink:
+                    type: string
+        '400':
+          description: Error occurred
+
+    post:
+      tags:
+        - Products
+      summary: Add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: Error occurred
+
+  /api/products/{productId}:
+    parameters:
+      - name: productId
+        in: path
+        description: ID of the product to retrieve, update, or delete
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9a-fA-F]{24}$'
+
+    get:
+      tags:
+        - Products
+      summary: Get a product by its ID
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error occurred
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product by its ID
+      responses:
+        '204':
+          description: Product deleted successfully
+        '400':
+          description: Error occurred
+
+    put:
+      tags:
+        - Products
+      summary: Update a product by its ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    type: string
+                    example: "Product updated successfully"
+        '400':
+          description: Error occurred
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product title
+          example: "Product C"
+        description:
+          type: string
+          description: Product description
+          example: "This is the description for Product C."
+        price:
+          type: number
+          format: float
+          description: Product price
+          example: 19.99
+        code:
+          type: string
+          description: Unique product code
+          example: "GHI789"
+        stock:
+          type: integer
+          description: Amount of product in stock
+          example: 1
+        category:
+          type: string
+          description: Product category
+          example: "Category3"
+        status:
+          type: boolean
+          description: Product status (default is true)
+          example: true
+        thumbnails:
+          type: array
+          items:
+            type: string
+            format: uri
+            description: Thumbnail image URL
+          description: List of product image URLs
+          example:
+            - "https://example.com/image7.jpg"
+            - "https://example.com/image8.jpg"
+            - "https://example.com/image9.jpg"
+        owner:
+          type: string
+          description: Email of the product owner (default is 'admin')
+          example: "admin@example.com"
+      required:
+        - title
+        - description
+        - price
+        - code
+        - stock
+        - category

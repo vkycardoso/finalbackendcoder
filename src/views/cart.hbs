@@ -1,0 +1,85 @@
+{{#if error}}
+<div class="alert alert-danger mx-5">{{error}}</div>
+{{/if}}
+
+{{#if message}}
+<div class="alert alert-info mx-5">{{message}}</div>
+{{/if}}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-center">Products in cart</h2>
+
+      {{#if products}}
+        {{#each products}}
+        <div class="card store_card mx-auto mb-2">
+          <div class="row no-gutters">
+            <!-- Product Details -->
+            <div class="col-md-8">
+              <div class="card-body py-2"> 
+                <h5 class="card-title text-sm">{{this.productId.title}}</h5>
+                <p class="card-text text-sm">{{this.productId.description}}</p>
+                <div class="row">
+                  <div class="col">
+                      <p class="card-text text-sm">Price: ${{this.productId.price}}</p>
+                  </div>
+                  <div class="col">
+                      <p class="card-text text-sm">Code: {{this.productId.code}}</p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                      <p class="card-text text-sm">Stock: {{this.productId.stock}}</p>
+                  </div>
+                  <div class="col">
+                      <p class="card-text text-sm">Category: {{this.productId.category}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Quantity -->
+            <div class="col-md-3 d-flex align-items-center px-3">
+                <div class="row w-100">
+                    <div class="col-9 d-flex align-items-center justify-content-between">
+                        <form action="/api/carts/{{../user.cartId}}/product/{{this.productId._id}}/decrease" method="post">
+                            <button class="btn btn-light btn-sm mr-2" type="submit">-</button>
+                        </form>
+                        <span class="text-sm">{{this.quantity}}</span>
+                        <form action="/api/carts/{{../user.cartId}}/product/{{this.productId._id}}/increase" method="post">
+                            <button class="btn btn-light btn-sm ml-2" type="submit">+</button>
+                        </form>
+                    </div>
+                    <div class="col-3 text-center">
+                        <form action="/api/carts/{{../user.cartId}}/product/{{this.productId._id}}" method="post">
+                            <button type="submit" class="btn btn-link p-0 border-0 bg-transparent">
+                                <i class="fas fa-trash-alt text-dark"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      {{else}}
+        <div class="text-center"> No products in cart </div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="row mt-2 mb-3">
+    <div class="col text-center">
+      <a href="/" class="btn btn-primary mr-2">Continue Shopping</a>
+      <form action="/api/carts/{{user.cartId}}/purchase" method="post" class="d-inline">
+        <button type="submit" class="btn btn-success">Checkout</button>
+      </form>
+    </div>
+  </div>
+
+  <a href="/chat" class="btn btn-primary rounded-circle p-0 shadow d-flex justify-content-center align-items-center" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;">
+    <i class="fas fa-comments text-white" style="font-size: 24px;"></i>
+  </a>
+</div>
+
+

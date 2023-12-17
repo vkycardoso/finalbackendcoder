@@ -1,0 +1,125 @@
+<div id="message-container">
+  {{#if error}}
+  <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+  {{#if message}}
+  <div class="alert alert-info">{{message}}</div>
+  {{/if}}
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-center mb-3">Users</h2>
+
+      <div class="text-center">
+        <button type="button" id="cleanup-users-button" class="btn btn-danger my-3 px-4">Clean up users</button>
+      </div>
+
+      {{#each userList}}
+        <div class="card store_card mx-auto mb-2"> 
+          <div class="row no-gutters">
+
+            <!-- Product Details Column -->
+            <div class="col-md-9">
+              <div class="card-body ms-1 my-1 py-2"> 
+                <h5 class="card-title text-sm">{{this.firstName}} {{this.lastName}}</h5>
+                <p class="card-text text-sm my-1">E-mail: {{this.email}}</p> 
+                <p class="card-text text-sm mt-1 mb-2">Last connection: {{this.last_connection}}</p> 
+                <div class="row">
+                  <div class="col">
+                      <p class="card-text text-sm">Role: {{this.role}}</p> 
+                  </div>
+                  <div class="col">
+                      {{#if this.age}}
+                        <p class="card-text text-sm">Age: {{this.age}}</p> 
+                      {{else}}
+                        <p class="card-text text-sm">Age: -</p> 
+                      {{/if}}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add to Cart Button Column -->
+            <div class="col-md-2 d-flex align-items-center justify-content-center">
+              <div class="col">
+                <div class="row">
+                  {{#if (eq this.role "user")}}
+                    <button type="button" class="btn btn-success btn-sm my-2 updowngrade-button" data-id="{{this._id}}">Upgrade</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-button" data-id="{{this._id}}">Delete</button>
+                  {{else if (eq this.role "premium")}}
+                    <button type="button" class="btn btn-warning btn-sm my-2 updowngrade-button" data-id="{{this._id}}">Downgrade</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-button" data-id="{{this._id}}">Delete</button>
+                  {{/if}}
+                </div>
+              </div>  
+            </div>
+          </div>
+        </div>
+      {{/each}}
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.updowngrade-button').forEach(button => {
+  button.addEventListener('click', function() {
+    const userId = this.dataset.id;
+
+    fetch(`/api/users/role/change/${userId}`, {
+      method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        location.reload(); 
+      } else {
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+});
+
+document.querySelectorAll('.delete-button').forEach(button => {
+  button.addEventListener('click', function() {
+    const userId = this.dataset.id;
+
+    fetch(`/api/users/${userId}`, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        location.reload(); 
+      } else {
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+});
+
+document.getElementById('cleanup-users-button').addEventListener('click', function() {
+  if (confirm('Are you sure you want to clean up inactive users?')) {
+    fetch('/api/users', {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        location.reload(); 
+      } else {
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+});
+</script>

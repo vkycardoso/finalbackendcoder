@@ -1,0 +1,112 @@
+<div id="message-container">
+  {{#if error}}
+  <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+  {{#if message}}
+  <div class="alert alert-info">{{message}}</div>
+  {{/if}}
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Add a product</h2>
+
+                    <form id="add-product-form">
+                        <div class="form-group">
+                            <label for="title">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="code">Code:</label>
+                            <input type="text" class="form-control" id="code" name="code" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                            <input type="text" class="form-control" id="category" name="category" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" class="form-control" id="price" name="price" min="0.1" max="10000" required>
+                            <small id="priceWarning" class="text-danger" style="display: none;">Minimum price is $0.1</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" class="form-control" id="stock" name="stock" min="0" max="1000" required>
+                            <small id="stockWarning" class="text-danger" style="display: none;">Stock should be an integer greater or equal to 0</small>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary btn-lg mt-3 px-4" id="add-product-button">Add product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  let validPrice = true;
+  let validStock = true;
+
+  const priceInput = document.getElementById('price');
+  priceInput.addEventListener('input', () => {
+    if (priceInput.value < 0.1) {
+      document.getElementById('priceWarning').style.display = 'block';
+      validPrice = false;
+    } else {
+      document.getElementById('priceWarning').style.display = 'none';
+      validPrice = true;
+    }
+  });
+
+  const stockInput = document.getElementById('stock');
+  stockInput.addEventListener('input', () => {
+    if (stockInput.value < 0 || !Number.isInteger(Number(stockInput.value))) {
+      document.getElementById('stockWarning').style.display = 'block';
+      validStock = false;
+    } else {
+      document.getElementById('stockWarning').style.display = 'none';
+      validStock = true;
+    }
+  });
+
+  document.getElementById('add-product-button').addEventListener('click', function() {
+    const form = document.getElementById('add-product-form');
+    const formData = new FormData(form);
+
+    if (!validPrice || !validStock) {
+      return;
+    }
+
+    fetch('/api/products', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        window.location.href = '/store';
+      } else {
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 2500);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>

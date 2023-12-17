@@ -1,0 +1,93 @@
+<div id="message-container">
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Register</h2>
+
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="firstName">First Name:</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name:</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">Age:</label>
+                            <input type="number" class="form-control" id="age" name="age" min="16" required>
+                            <small id="ageWarning" class="text-danger" style="display: none;">You must be at least 16 years old</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary btn-lg mt-3 px-4" id="register-button">Register</button>
+                            <div class="mt-2">
+                                <a href="/auth/login">Already registered? Sign in</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+  let validAge = true;
+
+  const ageInput = document.getElementById('age');
+  ageInput.addEventListener('input', () => {
+    if (ageInput.value < 16) {
+      document.getElementById('ageWarning').style.display = 'block';
+      validAge = false;
+    } else {
+      document.getElementById('ageWarning').style.display = 'none';
+      validAge = true;
+    }
+  });
+
+  document.getElementById('register-button').addEventListener('click', function() {
+    const form = document.getElementById('register-form');
+    const formData = new FormData(form);
+
+    if (!validAge) {
+      return;
+    }
+
+    fetch(`/auth/register/`, {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const messageContainer = document.getElementById('message-container');
+      if (data.status === 'success') {
+        window.location.href = '/auth/register/success';
+      } else {
+        messageContainer.innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+      }
+      setTimeout(() => messageContainer.innerHTML = '', 2500);
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>

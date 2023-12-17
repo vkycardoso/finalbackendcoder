@@ -1,0 +1,88 @@
+{{#if error}}
+<div class="alert alert-danger mx-5">{{error}}</div>
+{{/if}}
+
+{{#if message}}
+<div class="alert alert-info mx-5">{{message}}</div>
+{{/if}}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-center mb-3">Products</h2>
+
+      {{#each docs}}
+        <div class="card store_card mx-auto mb-2"> 
+          <div class="row no-gutters">
+
+            <!-- Product Details Column -->
+            <div class="col-md-8">
+              <div class="card-body py-2"> 
+                <h5 class="card-title text-sm">{{this.title}}</h5>
+                <p class="card-text text-sm">{{this.description}}</p> 
+                <div class="row">
+                  <div class="col">
+                      <p class="card-text text-sm">Price: ${{this.price}}</p> 
+                  </div>
+                  <div class="col">
+                      <p class="card-text text-sm">Code: {{this.code}}</p> 
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                      <p class="card-text text-sm">Stock: {{this.stock}}</p> 
+                  </div>
+                  <div class="col">
+                      <p class="card-text text-sm">Category: {{this.category}}</p> 
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Add to Cart Button Column -->
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+              {{#if ../user}}
+              <form action="/api/carts/{{../user.cartId}}/product/{{this._id}}/increase" method="post">
+                <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
+              </form>
+              {{else}}
+              <a href="/auth/login">
+                <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
+              </a>
+              {{/if}}
+            </div>
+
+          </div>
+        </div>
+      {{/each}}
+
+    </div>
+  </div>
+
+  <div class="row mt-4 mb-2">
+    <div class="col text-center">
+      {{#if hasPrevPage}}
+          {{#if query}}
+              <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}&query={{query}}" class="btn btn-primary">Prev Page</a>
+          {{else}}
+              <a href="/?page={{prevPage}}&limit={{limit}}&sort={{sort}}" class="btn btn-primary">Prev Page</a>
+          {{/if}}
+      {{/if}}
+
+      <span class="mx-4">{{page}}/{{totalPages}}</span>
+      
+      {{#if hasNextPage}}
+          {{#if query}}
+              <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}&query={{query}}" class="btn btn-primary">Next Page</a>
+          {{else}}
+              <a href="/?page={{nextPage}}&limit={{limit}}&sort={{sort}}" class="btn btn-primary">Next Page</a>
+          {{/if}}
+      {{/if}}
+    </div>
+  </div>
+
+  <a href="/chat" class="btn btn-primary rounded-circle p-0 shadow d-flex justify-content-center align-items-center" style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;">
+    <i class="fas fa-comments text-white" style="font-size: 24px;"></i>
+  </a>
+
+</div>
